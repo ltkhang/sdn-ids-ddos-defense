@@ -7,7 +7,6 @@ class SVMPredictor:
     def __init__(self, model_path):
         self.model = pickle.load(open(model_path, 'rb'))
 
-    def predict(self, data):
-        flow_id, features = data
+    def predict(self, features):
         x = normalize(np.asarray(features))
-        return flow_id, self.model.predict(x)[0]
+        return self.model.predict(x)[0]

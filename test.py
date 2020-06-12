@@ -1,6 +1,5 @@
 from scapy.all import *
 from scapy.layers.inet import IP, TCP, UDP
-import pyshark
 from datetime import datetime
 from basic_packet_info import BasicPacketInfo
 from basic_flow import BasicFlow
@@ -60,41 +59,15 @@ def pkt_cb_2(pkt):
     del pkt
 
 
-def pyshark_cb(pkt):
-    basic_packer_info = BasicPacketInfo()
-    basic_packer_info.timestamp = pkt.sniff_timestamp * 1000
-    if 'ip' in pkt:
-        basic_packer_info.src = pkt.ip.src
-        basic_packer_info.dst = pkt.ip.dst
-        if 'tcp' in pkt:
-            print(dir(pkt.tcp), pkt.tcp.flags)
-            basic_packer_info.tcp_window = pkt.tcp.window_size
-            basic_packer_info.src_port = pkt.tcp.srcport
-            basic_packer_info.dst_port = pkt.tcp.dstport
-            basic_packer_info.protocol = 6
-            # basic_packer_info.set_flag(pkt.tcp.flags)
-            print(pkt.tcp.payload)
-
-
-
-
-
-
-def signal_handler(sig, frame):
-    print('You pressed Ctrl+C!')
-    sys.exit(0)
-
-
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print(sys.argv[0], '<network interface>')
+        exit(0)
+    inet = sys.argv[1]
     controller.add_flow_generator(FlowGenerator(120 * 1000, 5 * 1000, on_flow_generated))
     controller.start()
     ml_controller.start()
     time.sleep(1)
-    sniff(iface='enp4s0', prn=pkt_cb_2)
-    # capture = pyshark.LiveCapture(interface='enp4s0')
-    # capture.apply_on_packets(pyshark_cb)
+    sniff(iface=inet, prn=pkt_cb_2)
     controller.join()
     ml_controller.join()
-    # signal.signal(signal.SIGINT, signal_handler)
-    # print('Press Ctrl+C')
-    # signal.pause()
