@@ -8,9 +8,13 @@ class MachineLearningController(threading.Thread):
         self.queue = Queue()
         self.is_running = False
         self.predictor = None
+        self.on_notify = None
 
     def add_predictor(self, predictor):
         self.predictor = predictor
+
+    def add_on_notify(self, on_notify):
+        self.on_notify = on_notify
 
     def run(self):
         print('start machine learning controller')
@@ -20,9 +24,12 @@ class MachineLearningController(threading.Thread):
                 flow_id, features = self.queue.get()
                 res = self.predictor.predict(features)
                 if res == 1:
-                    print(flow_id, 'Attack')
+                    f = flow_id.split('-')
+                    if len(f) == 5:
+                        self.on_notify(f[0] + '-' + f[1])
+                    print(flow_id, 'ATTACK')
                 else:
-                    print(flow_id, 'Bengin')
+                    print(flow_id, 'Benign')
 
     def put(self, flow):
         self.queue.put(flow)
