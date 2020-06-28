@@ -27,9 +27,6 @@ class MachineLearningController(threading.Thread):
                     f = flow_id.split('-')
                     if len(f) == 5:
                         self.on_notify(f[0] + '-' + f[1])
-                    print(flow_id, 'ATTACK')
-                else:
-                    print(flow_id, 'Benign')
 
     def put(self, flow):
         self.queue.put(flow)

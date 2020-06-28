@@ -2,7 +2,7 @@ import socket
 import os
 
 
-class NotifyController():
+class NotifyController:
     def __init__(self):
         self.client = None
 

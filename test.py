@@ -7,7 +7,7 @@ from flow_generator import FlowGenerator
 from packet_controller import PacketController
 from ml_controller import MachineLearningController
 from notify_controller import NotifyController
-from predictor.svm_predictor import SVMPredictor
+from predictor.predictor_factory import PredictorFactory
 import signal
 import sys
 
@@ -34,16 +34,21 @@ def on_pkt(pkt):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print(sys.argv[0], '<network interface>')
+    if len(sys.argv) < 5:
+        print(sys.argv[0], '<network interface> <unixsocket_path> <model_name> <model_path>')
         exit(0)
     inet = sys.argv[1]
+    unixsock_path = sys.argv[2]
+    model_name = sys.argv[3]
+    model_path = sys.argv[4]
+
     pkt_controller.add_flow_generator(FlowGenerator(120 * 1000, 5 * 1000, on_flow_generated))
-    ml_controller.add_predictor(SVMPredictor('./model/svm_model.pkl'))
+    predictor_factory = PredictorFactory(model_name, model_path)
+    ml_controller.add_predictor(predictor_factory.get())
     ml_controller.add_on_notify(on_notify)
-    res = notify_controller.init_socket('/tmp/ids-ddos')
+    res = notify_controller.init_socket(unixsock_path)
     if not res:
-        print('Unix socket server not found', '/tmp/ids-ddos')
+        print('Unix socket server not found', unixsock_path)
         exit(-1)
     pkt_controller.start()
     ml_controller.start()
