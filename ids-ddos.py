@@ -18,7 +18,6 @@ notify_controller = NotifyController()
 
 
 def on_flow_generated(flow=BasicFlow()):
-    # print(flow.flow_id)
     ml_controller.put((flow.flow_id, flow.dump_features()))
     del [flow]
 
