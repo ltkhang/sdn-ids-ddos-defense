@@ -1,4 +1,4 @@
-from .svm_predictor import SVMPredictor
+from .ml_predictor import MLPredictor
 from .dnn_predictor import DNNPredictor
 
 SVM_NAME = 'svm'
@@ -14,6 +14,6 @@ class PredictorFactory:
         if self.name == DNN_NAME:
             return DNNPredictor(self.path)
         else:
-            return SVMPredictor(self.path)
+            return MLPredictor(self.path)
 
 
