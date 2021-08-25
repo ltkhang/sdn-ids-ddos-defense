@@ -2,5 +2,5 @@ matplotlib==3.2.1
 numpy==1.19.0rc2
 scapy==2.4.3
 scikit-learn==0.23.1
-tensorflow==1.15.4
+tensorflow==2.5.1
 keras==2.2.5
